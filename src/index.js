@@ -17,7 +17,6 @@ $('body').ready(function() {
 
         renderer
         .initShaders(fragmentShader, vertexShader)
-        .clear()
         .render();
     }, err => {
         console.log(err);
@@ -30,6 +29,7 @@ $('body').ready(function() {
         let reader = new FileReader();
         reader.onload = e => {
             let result = e.target.result;
+            console.log(renderer);
             renderer.addMesh(result);
         };
 

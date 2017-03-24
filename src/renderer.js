@@ -15,6 +15,9 @@ class Renderer {
         this.camera = new Transform(this.shaderManager);
         this.mesh = new Mesh(this.shaderManager);
         this.light = new Light(this.shaderManager);
+
+        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        this.gl.enable(this.gl.DEPTH_TEST);
     }
     addMesh(data) {
       this.mesh.generateMesh(data);
@@ -33,7 +36,7 @@ class Renderer {
 
         this.shaderManager
             .getUniformLocation("pMatrixUniform", "uPMatrix")
-            .getUniformLocation("mvMatrixUniform", "uMVMatix")
+            .getUniformLocation("mvMatrixUniform", "uMVMatrix")
             .getUniformLocation("nMatrixUniform", "uNMatrix")
             .getUniformLocation("ambientColorUniform", "uAmbientColor")
             .getUniformLocation("lightingDirectionUniform", "uLightingDirection")
@@ -42,8 +45,7 @@ class Renderer {
         return this;
     }
     clear() {
-        this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        this.gl.enable(this.gl.DEPTH_TEST);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
         return this;
     }
@@ -56,7 +58,9 @@ class Renderer {
         return this;
     }
     drawScene() {
-        this.camera.translate();
+        this.clear();
+
+        this.camera.setViewPort().setPerspective().translate();
 
         this.mesh.bindBuffers().draw();
 

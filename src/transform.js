@@ -15,16 +15,16 @@ import {mat4, mat3} from "gl-matrix";
         this.yaw = 0;
         this.gl = shaderManager.gl;
         this.shaderProgram = shaderManager.program;
-
-        this.setViewPort();
-        this.setPerspective();
     }
     setViewPort() {
         this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+        return this;
     }
     setPerspective() {
         mat4.perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 1000.0, this.pMatrix);
+
+        return this;
     }
     mvPushMatrix() {
         let copy = mat4.create();
