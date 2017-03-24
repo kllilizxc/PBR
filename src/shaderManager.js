@@ -36,14 +36,15 @@
     }
     checkShader(shader) {
         if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            console.log(this.gl.getShaderInfoLog(shader));
+            console.error(this.gl.getShaderInfoLog(shader));
             return false;
         }
         return true;
     }
     checkProgram() {
         if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
-            console.log("Could not initialise shaders");
+            console.error("Could not initialise shaders");
+            console.error(this.gl.getProgramInfoLog(this.program));
         }
         return this;
     }
