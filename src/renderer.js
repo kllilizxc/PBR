@@ -2,6 +2,7 @@ import ShaderManager from'./shaderManager.js';
 import Transform from './transform.js';
 import Mesh from './mesh.js';
 import Light from './light.js';
+import Pyramid from './pyramid.js'
 
 class Renderer {
     constructor(canvas) {
@@ -15,6 +16,7 @@ class Renderer {
         this.camera = new Transform(this.shaderManager);
         this.mesh = new Mesh(this.shaderManager);
         this.light = new Light(this.shaderManager);
+        this.pyramid = new Pyramid(this.shaderManager);
 
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this.gl.enable(this.gl.DEPTH_TEST);
@@ -61,6 +63,8 @@ class Renderer {
         this.clear();
 
         this.camera.setViewPort().setPerspective().translate();
+
+        this.pyramid.bindBuffer().draw();
 
         this.mesh.bindBuffers().draw();
 
