@@ -3,7 +3,7 @@
  */
 import OBJ from "webgl-obj-loader";
 
- class Mesh {
+ class MeshManager {
     constructor(shaderManager) {
         this.gl = shaderManager.gl;
         this.shaderManager = shaderManager;
@@ -25,7 +25,7 @@ import OBJ from "webgl-obj-loader";
         var gl = this.gl;
         for(let mesh of this.meshes) {
             this.bindBuffer(mesh, "vertexPositionAttribute", "vertexBuffer");
-            this.bindBuffer(mesh, "vertexNormalAttribute", "normalBuffer");
+            // this.bindBuffer(mesh, "vertexNormalAttribute", "normalBuffer");
         }
 
         return this;
@@ -39,4 +39,4 @@ import OBJ from "webgl-obj-loader";
     }
  }
 
- export default Mesh;
+ export default MeshManager;

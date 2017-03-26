@@ -1,40 +1,22 @@
-import Transform from "../transform.js"
+import Mesh from './mesh.js'
 
-class Square {
+class Square extends Mesh {
 	constructor(shaderManager) {
-		this.gl = shaderManager.gl;
-		this.shaderManager = shaderManager;
-		this.verticesBuffer = this.gl.createBuffer();
+		super(shaderManager);
 
-		this.transform = new Transform(shaderManager);
-  
-		this.vertices = [
+		let vertices = [
 		1.0,  1.0,  0.0,
+		-1.0, 1.0,  0.0,
+		1.0,  -1.0, 0.0,
 		-1.0, 1.0,  0.0,
 		1.0,  -1.0, 0.0,
 		-1.0, -1.0, 0.0
 		];
-	}
-	bindBuffers() {
-	  	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.verticesBuffer);
-	  	this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.vertices), this.gl.STATIC_DRAW);
 
-	  	return this;
-	}
-	translate(x, y, z) {
-		this.transform.xPos = x;
-		this.transform.yPos = y;
-		this.transform.zPos = z;
-		this.transform.translate();
-
-		return this;
+		super.bindVertexBuffer(vertices, 3, 6);
 	}
 	draw() {
-		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.verticesBuffer);
-  		this.gl.vertexAttribPointer(this.shaderManager.vertexPositionAttribute, 3, this.gl.FLOAT, false, 0, 0);
-  		this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
-
-  		return this;
+		super.drawArrays();
 	}
 }
 

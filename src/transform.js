@@ -1,55 +1,62 @@
 /**
  * Created by 54179 on 2017/3/21.
  */
-import {mat4, mat3} from "gl-matrix";
+import {glMatrix, mat4, mat3} from "gl-matrix";
 
  class Transform {
     constructor(shaderManager) {
-        this.mvMatrix = mat4.create();
-        this.mvMatrixStack = [];
-        this.pMatrix = mat4.create();
         this.xPos = 0;
         this.yPos = 0;
         this.zPos = 0;
         this.pitch =  0;
         this.yaw = 0;
         this.gl = shaderManager.gl;
-        this.shaderProgram = shaderManager.program;
+        this.shaderManager = shaderManager;
     }
-    setViewPort() {
-        this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
-
-        return this;
+    static reset() {
+        Transform.mvMatrixStack = [];
+        mat4.identity(Transform.mvMatrix);
     }
-    setPerspective() {
-        mat4.perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 1000.0, this.pMatrix);
-        this.gl.uniformMatrix4fv(this.shaderProgram.pMatrixUniform, false, this.pMatrix);
-
-        return this;
-    }
-    mvPushMatrix() {
+    static mvPushMatrix() {
         let copy = mat4.create();
-        mat4.set(this.mvMatrix, copy);
-        this.mvMatrixStack.push(copy);
+        mat4.copy(copy, Transform.mvMatrix);
+        Transform.mvMatrixStack.push(copy);
     }
-    mvPopMatrix() {
-        if(this.mvMatrixStack.length == 0) {
+    static mvPopMatrix() {
+        if(Transform.mvMatrixStack.length == 0) {
             throw "Invalid popMatrix!";
         }
-        this.mvMatrix = this.mvMatrixStack.pop();
+        Transform.mvMatrix = Transform.mvMatrixStack.pop();
     }
-    degToRad(deg) {
+    static degToRad(deg) {
         return deg * Math.PI / 180;
     }
-    translate() {
-        this.mvPushMatrix();
-        mat4.identity(this.mvMatrix);
-        mat4.translate(this.mvMatrix, this.mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
-        mat4.rotate(this.mvMatrix, this.mvMatrix, this.degToRad(-this.pitch), [1, 0, 0]);
-        mat4.rotate(this.mvMatrix, this.mvMatrix, this.degToRad(-this.yaw), [0, 1, 0]);
-        this.gl.uniformMatrix4fv(this.shaderProgram.mvMatrixUniform, false, this.mvMatrix);
-        this.mvPopMatrix();
+    translate(x, y, z) {
+        this.xPos = x;
+        this.yPos = y;
+        this.zPos = z;
+        this._translate();
+    }
+    _translate() {
+        mat4.translate(Transform.mvMatrix, Transform.mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
+    }
+    rotate(pitch, yaw) {
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this._rotate();
+    }
+    _rotate() {
+        mat4.rotateX(Transform.mvMatrix, Transform.mvMatrix, glMatrix.toRadian(-this.pitch));
+        mat4.rotateY(Transform.mvMatrix, Transform.mvMatrix, glMatrix.toRadian(-this.yaw));
+    }
+    setMatrixUniforms() {
+        this.gl.uniformMatrix4fv(this.shaderManager.pMatrixUniform, false, Transform.pMatrix);
+        this.gl.uniformMatrix4fv(this.shaderManager.mvMatrixUniform, false, Transform.mvMatrix);
     }
  }
+
+Transform.mvMatrix = mat4.create();
+Transform.pMatrix = mat4.create();
+Transform.mvMatrixStack = [];
 
  export default Transform;
