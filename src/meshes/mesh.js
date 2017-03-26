@@ -1,47 +1,42 @@
 import Transform from '../transform.js'
 
 class Mesh {
-	constructor(shaderManager) {
+	constructor(shaderManager, vertexNum) {
 		this.gl = shaderManager.gl;
 		this.shaderManager = shaderManager;
 		this.transform = new Transform(shaderManager);
 
-		this.vertexBuffer = this.gl.createBuffer();
-		this.indexBuffer = this.gl.createBuffer();
-		this.colorBuffer = this.gl.createBuffer();
-		this.normalBuffer = this.gl.createBuffer();
-
+		this.vertexNum = vertexNum;
 		this.hasBeenTransformed = false;
 	}
-	bindVertexBuffer(buffer, itemSize, itemNum) {
+	bindVertexBuffer(buffer, itemSize) {
+		this.vertexBuffer = this.gl.createBuffer();
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
 	  	this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(buffer), this.gl.STATIC_DRAW);
-	  	this.vertexBuffer.itemSize = itemSize;
-	  	this.vertexBuffer.itemNum = itemNum;
+        this.gl.vertexAttribPointer(this.shaderManager.vertexPositionAttribute, itemSize, this.gl.FLOAT, false, 0, 0);
 
 	  	return this;
 	}
-	bindIndexBuffer(buffer, itemSize, itemNum) {
+	bindIndexBuffer(buffer) {
+		this.indexBuffer = this.gl.createBuffer();
 		this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 		this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(buffer), this.gl.STATIC_DRAW);
-	  	this.indexBuffer.itemSize = itemSize;
-	  	this.indexBuffer.itemNum = itemNum;
 
 	  	return this;
 	}
-	bindColorBuffer(buffer, itemSize, itemNum) {
+	bindColorBuffer(buffer, itemSize) {
+		this.colorBuffer = this.gl.createBuffer();
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
 		this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(buffer), this.gl.STATIC_DRAW);
-		this.colorBuffer.itemSize = itemSize;
-		this.colorBuffer.numItems = itemNum;
+        this.gl.vertexAttribPointer(this.shaderManager.vertexColorAttribute, itemSize, this.gl.FLOAT, false, 0, 0);
 
 		return this;
 	}
-	bindNormalBuffer(buffer, itemSize, itemNum) {
+	bindNormalBuffer(buffer, itemSize) {
+		this.normalBuffer = this.gl.createBuffer();
 		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.normalBuffer);
 		this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(buffer), this.gl.STATIC_DRAW);
-		this.normalBuffer.itemSize = itemSize;
-		this.normalBuffer.numItems = itemNum;
+        this.gl.vertexAttribPointer(this.shaderManager.vertexNormalAttribute, itemSize, this.gl.FLOAT, false, 0, 0);
 
 		return this;
 	}
@@ -74,11 +69,8 @@ class Mesh {
         this.gl.vertexAttribPointer(attr, buffer.itemSize, this.gl.FLOAT, false, 0, 0);
 	}
 	drawArrays() {
-		this.bindArrayBuffer(this.vertexBuffer, this.shaderManager.vertexPositionAttribute);
-		this.bindArrayBuffer(this.colorBuffer, this.shaderManager.vertexColorAttribute);
-
         this.transform.setMatrixUniforms();
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexBuffer.itemNum);
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexNum);
 
 		if(this.hasBeenTransformed)
 			this.popMatrix();
@@ -86,14 +78,10 @@ class Mesh {
         return this;
 	}
 	drawElements() {
-		this.bindArrayBuffer(this.vertexBuffer, this.shaderManager.vertexPositionAttribute);
-		this.bindArrayBuffer(this.colorBuffer, this.shaderManager.vertexColorAttribute);
-		// this.bindArrayBuffer(this.normalBuffer, this.shaderManager.vertexNormalAttribute);
-
 		//index
 		this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        this.transform.setMatrixUniforms();
-		this.gl.drawElements(this.gl.TRIANGLES, this.indexBuffer.itemNum, this.gl.UNSIGNED_SHORT, 0);
+        // this.transform.setMatrixUniforms();
+		this.gl.drawElements(this.gl.TRIANGLES, this.vertexNum, this.gl.UNSIGNED_SHORT, 0);
 
 		if(this.hasBeenTransformed)
 			this.popMatrix();

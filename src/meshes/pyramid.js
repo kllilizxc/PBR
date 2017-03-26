@@ -2,7 +2,7 @@ import Mesh from './mesh.js'
 
 class Pyramid extends Mesh {
 	constructor(shaderManager) {
-		super(shaderManager);
+		super(shaderManager, 18);
 		let vertices = [
 			// Front face
 			 0.0,  1.0,  0.0,
@@ -21,7 +21,6 @@ class Pyramid extends Mesh {
 			-1.0, -1.0, -1.0,
 			-1.0, -1.0,  1.0
 		];
-		super.bindVertexBuffer(vertices, 3, 12);
 
 		let colors = [
             // Front face
@@ -53,7 +52,9 @@ class Pyramid extends Mesh {
             0.0, 0.0, 1.0, 1.0,
             0.0, 1.0, 0.0, 1.0
         ];
-        super.bindColorBuffer(colors, 4, 18);
+
+		super.bindVertexBuffer(vertices, 3)
+        	 .bindColorBuffer(colors, 4);
 	}
 	draw() {
 		super.drawArrays();

@@ -2,7 +2,7 @@ import Mesh from './mesh.js'
 
 export default class Cube extends Mesh {
 	constructor(shaderManager) {
-		super(shaderManager);
+		super(shaderManager, 36);
 		let vertices = [
 		  // Front face
 		  -1.0, -1.0,  1.0,
@@ -40,7 +40,6 @@ export default class Cube extends Mesh {
 		  -1.0,  1.0,  1.0,
 		  -1.0,  1.0, -1.0,
 		];
-		super.bindVertexBuffer(vertices, 3, 24);
 
 		let vertexIndices = [
 		  0, 1, 2,      0, 2, 3,    // Front face
@@ -50,7 +49,6 @@ export default class Cube extends Mesh {
 		  16, 17, 18,   16, 18, 19, // Right face
 		  20, 21, 22,   20, 22, 23  // Left face
 		];
-		super.bindIndexBuffer(vertexIndices, 1, 36);
 
 		let colors = [
             [1.0, 0.0, 0.0, 1.0], // Front face
@@ -67,7 +65,6 @@ export default class Cube extends Mesh {
                 unpackedColors = unpackedColors.concat(color);
             }
         }
-        super.bindColorBuffer(unpackedColors, 4, 24);
 
 		let vertexNormals = [
 		  // Front face
@@ -106,7 +103,11 @@ export default class Cube extends Mesh {
 		  -1.0,  0.0,  0.0,
 		  -1.0,  0.0,  0.0,
 		];
-		super.bindNormalBuffer(vertexNormals, 3, 24);
+
+		super.bindVertexBuffer(vertices, 3)
+        	 .bindColorBuffer(unpackedColors, 4)
+			 .bindIndexBuffer(vertexIndices);
+		// super.bindNormalBuffer(vertexNormals, 3, 24);
 	}
 	draw() {
 		super.drawElements();

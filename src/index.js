@@ -17,6 +17,7 @@ $('body').ready(function() {
 
         renderer
         .initShaders(fragmentShader, vertexShader)
+        .createTestObjs()
         .render();
         // .drawScene();
     }, err => {

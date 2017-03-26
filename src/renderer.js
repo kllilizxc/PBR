@@ -21,16 +21,9 @@ class Renderer {
         this.camera = new Camera(this.shaderManager);
         this.meshManager = new MeshManager(this.shaderManager);
         this.light = new Light(this.shaderManager);
-        this.square = new Square(this.shaderManager);
-        this.pyramid = new Pyramid(this.shaderManager);
-        this.cube = new Cube(this.shaderManager);
 
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-
-        Transform.reset();
     }
     addMesh(data) {
       this.meshManager.generateMesh(data);
@@ -60,6 +53,19 @@ class Renderer {
     }
     clear() {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    }
+    createTestObjs() {
+        this.square = new Square(this.shaderManager);
+        this.pyramid = new Pyramid(this.shaderManager);
+        this.cube = new Cube(this.shaderManager);
+
+        return this;
+    }
+    drawTestObjs() {
+        this.square.draw();
+        // this.pyramid.draw();
+        // this.cube.draw();
     }
     render() {
         requestAnimationFrame(() => {
@@ -75,22 +81,18 @@ class Renderer {
     drawScene() {
         this.clear();
 
-        this.camera.setViewPort()
-                .setPerspective();
+        // this.camera.setViewPort()
+                // .setPerspective();
 
-        Transform.reset();
+        // Transform.reset();
         
-        // this.camera.transform.translate(1.5, 0, 8.0);
-        this.camera.translate()
-                .rotate();
+        // this.camera.transform.translate(1.5, 0, -8.0);
+        // this.camera.translate()
+                // .rotate();
                 
-        // this.camera.transform.translate(1.5, 0, 8.0);
-
         // this.meshManager.bindBuffers().draw();
 
-        // this.square.draw();
-        this.pyramid.draw();
-        // this.cube.draw();
+        this.drawTestObjs();
 
         // this.light.render();        
     }

@@ -26,8 +26,7 @@ export default class Camerta {
         return this;
     }
     setPerspective() {
-        mat4.perspective(Transform.pMatrix, glMatrix.toRadian(45), this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
-        console.log(Transform.pMatrix);
+  	    mat4.perspective(Transform.pMatrix, glMatrix.toRadian(90), this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
         return this;
     }
     translate() {
