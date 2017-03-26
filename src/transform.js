@@ -23,6 +23,7 @@ import {mat4, mat3} from "gl-matrix";
     }
     setPerspective() {
         mat4.perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 1000.0, this.pMatrix);
+        this.gl.uniformMatrix4fv(this.shaderProgram.pMatrixUniform, false, this.pMatrix);
 
         return this;
     }
@@ -37,25 +38,17 @@ import {mat4, mat3} from "gl-matrix";
         }
         this.mvMatrix = this.mvMatrixStack.pop();
     }
-    setMatrixUniforms() {
-        var gl = this.gl;
-        var shaderProgram = this.shaderProgram;
-        gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, this.pMatrix);
-        gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, this.mvMatrix);
-
-        let normalMatrix = mat3.create();
-        mat3.normalFromMat4(normalMatrix, this.mvMatrix);
-        gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
-    }
     degToRad(deg) {
         return deg * Math.PI / 180;
     }
     translate() {
+        this.mvPushMatrix();
         mat4.identity(this.mvMatrix);
         mat4.translate(this.mvMatrix, this.mvMatrix, [-this.xPos, -this.yPos, -this.zPos]);
         mat4.rotate(this.mvMatrix, this.mvMatrix, this.degToRad(-this.pitch), [1, 0, 0]);
         mat4.rotate(this.mvMatrix, this.mvMatrix, this.degToRad(-this.yaw), [0, 1, 0]);
-        this.setMatrixUniforms();
+        this.gl.uniformMatrix4fv(this.shaderProgram.mvMatrixUniform, false, this.mvMatrix);
+        this.mvPopMatrix();
     }
  }
 
