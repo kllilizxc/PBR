@@ -1,12 +1,9 @@
 import Transform from './transform.js'
 import {glMatrix, mat4} from "gl-matrix";
 
-export default class Camerta {
-	constructor(shaderManager) {
-		this.gl = shaderManager.gl;
-		this.shaderManager = shaderManager;
-
-		this.transform = new Transform(shaderManager);
+export default class Camera {
+	constructor() {
+		this.transform = new Transform();
 
     	this.currentlyPressedKeys = {};
 
@@ -20,13 +17,13 @@ export default class Camerta {
     	document.onkeydown = event => this.handleKeyDown(event);
 		document.onkeyup = event => this.handleKeyUp(event);
 	}
-	setViewPort() {
-        this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
+	setViewPort(width, height) {
+        gl.viewport(0, 0, width, height);
 
         return this;
     }
     setPerspective() {
-  	    mat4.perspective(Transform.pMatrix, glMatrix.toRadian(90), this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
+  	    mat4.perspective(Transform.pMatrix, glMatrix.toRadian(90), gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
         return this;
     }
     translate() {

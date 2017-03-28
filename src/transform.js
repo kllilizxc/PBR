@@ -4,14 +4,12 @@
 import {glMatrix, mat4, mat3} from "gl-matrix";
 
  class Transform {
-    constructor(shaderManager) {
+    constructor() {
         this.xPos = 0;
         this.yPos = 0;
         this.zPos = 0;
         this.pitch =  0;
         this.yaw = 0;
-        this.gl = shaderManager.gl;
-        this.shaderManager = shaderManager;
     }
     static reset() {
         Transform.mvMatrixStack = [];
@@ -27,9 +25,6 @@ import {glMatrix, mat4, mat3} from "gl-matrix";
             throw "Invalid popMatrix!";
         }
         Transform.mvMatrix = Transform.mvMatrixStack.pop();
-    }
-    static degToRad(deg) {
-        return deg * Math.PI / 180;
     }
     translate(x, y, z) {
         this.xPos = x;
@@ -48,10 +43,6 @@ import {glMatrix, mat4, mat3} from "gl-matrix";
     _rotate() {
         mat4.rotateX(Transform.mvMatrix, Transform.mvMatrix, glMatrix.toRadian(-this.pitch));
         mat4.rotateY(Transform.mvMatrix, Transform.mvMatrix, glMatrix.toRadian(-this.yaw));
-    }
-    setMatrixUniforms() {
-        this.gl.uniformMatrix4fv(this.shaderManager.pMatrixUniform, false, Transform.pMatrix);
-        this.gl.uniformMatrix4fv(this.shaderManager.mvMatrixUniform, false, Transform.mvMatrix);
     }
  }
 

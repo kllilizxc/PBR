@@ -1,8 +1,8 @@
 import Mesh from './mesh.js'
 
 export default class Cube extends Mesh {
-	constructor(shaderManager) {
-		super(shaderManager, 36);
+	constructor(gl) {
+		super(gl, 36);
 		let vertices = [
 		  // Front face
 		  -1.0, -1.0,  1.0,
@@ -104,12 +104,9 @@ export default class Cube extends Mesh {
 		  -1.0,  0.0,  0.0,
 		];
 
-		super.bindVertexBuffer(vertices, 3)
-        	 .bindColorBuffer(unpackedColors, 4)
-			 .bindIndexBuffer(vertexIndices);
+		super.initVertexBuffer(vertices)
+        	 .initColorBuffer(unpackedColors)
+			 .initIndexBuffer(vertexIndices);
 		// super.bindNormalBuffer(vertexNormals, 3, 24);
-	}
-	draw() {
-		super.drawElements();
 	}
 }

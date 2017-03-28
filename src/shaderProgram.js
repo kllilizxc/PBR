@@ -1,10 +1,11 @@
 /**
  * Created by 54179 on 2017/3/21.
  */
- class ShaderManager {
+
+ class ShaderProgram {
     constructor(gl) {
         this.gl = gl;
-        this.program = gl.createProgram();
+        this.program = this.gl.createProgram();
     }
     initVertexShader(data) {
         console.log("vs:");
@@ -54,15 +55,19 @@
         this.gl.useProgram(this.program);
         return this;
     }
-    getAttribLocation(attribName, varName) {
-        this[attribName] = this.gl.getAttribLocation(this.program, varName);
-        this.gl.enableVertexAttribArray(this[attribName]);
+    getAttribLocation(attribName, value) {
+        ShaderProgram[attribName] = this.gl.getAttribLocation(this.program, value);
+        this.gl.enableVertexAttribArray(ShaderProgram[attribName]);
         return this;
     }
-    getUniformLocation(attribName, varName) {
-        this[attribName] = this.gl.getUniformLocation(this.program, varName);
+    getUniformLocation(uniformName, value) {
+        ShaderProgram[uniformName] = this.gl.getUniformLocation(this.program, value);
         return this;
+    }
+
+    setVec3Uniform(uniformName, value) {
+        this.gl.uniform3fv(ShaderProgram[uniformName], value);
     }
  }
 
- export default ShaderManager;
+ export default ShaderProgram;

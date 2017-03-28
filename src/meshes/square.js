@@ -1,8 +1,8 @@
 import Mesh from './mesh.js'
 
 class Square extends Mesh {
-	constructor(shaderManager) {
-		super(shaderManager, 6);
+	constructor(gl) {
+		super(gl, 6);
 
 		let vertices = [
 		0.5,  0.5,  0.0,
@@ -20,12 +20,9 @@ class Square extends Mesh {
 		1, 0, 0
 		];
 
-		super.bindVertexBuffer(vertices, 3)
-			 .bindColorBuffer(colors, 3)
-			 .bindIndexBuffer(indices);
-	}
-	draw() {
-		super.drawElements();
+		super.initVertexBuffer(vertices)
+			 .initColorBuffer(colors)
+			 .initIndexBuffer(indices);
 	}
 }
 

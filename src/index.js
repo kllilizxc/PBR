@@ -2,12 +2,15 @@
  * Created by 54179 on 2017/3/21.
  */
 import Renderer from "./renderer.js";
-import $ from "jquery"
+import $ from 'jquery'
 
 $('body').ready(function() {
+    var gl;
     let canvas = $('#drawCanvas')[0];
-
-    var renderer = new Renderer(canvas);
+    gl = canvas.getContext("experimental-webgl");
+    if (!gl) alert("Could not initialise WebGL, sorry :-(");
+    
+    var renderer = new Renderer(gl, canvas.width, canvas.height);
 
     Promise.all([
         readTextFile("./shader/vertexShader.vs"),
@@ -18,8 +21,8 @@ $('body').ready(function() {
         renderer
         .initShaders(fragmentShader, vertexShader)
         .createTestObjs()
-        .render();
-        // .drawScene();
+        // .render();
+        .drawScene();
     }, err => {
         console.log(err);
     });
