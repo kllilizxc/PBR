@@ -5,9 +5,9 @@ import Renderer from "./renderer.js";
 import $ from 'jquery'
 
 $('body').ready(function() {
-    var gl;
     let canvas = $('#drawCanvas')[0];
-    gl = canvas.getContext("experimental-webgl");
+    var gl = canvas.getContext("webgl") || 
+             canvas.getContext("experimental-webgl");
     if (!gl) alert("Could not initialise WebGL, sorry :-(");
     
     var renderer = new Renderer(gl, canvas.width, canvas.height);

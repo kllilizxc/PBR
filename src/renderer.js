@@ -11,12 +11,10 @@ import {glMatrix, mat4} from "gl-matrix";
 class Renderer {
     constructor(gl, width, height) {
         this.gl = gl;
-        this.width = width;
-        this.height = height;
 
         //sub-components
         this.shaderProgram = new ShaderProgram(this.gl);
-        this.camera = new Camera();
+        this.camera = new Camera(width, height);
         // this.meshManager = new MeshManager(this.shaderProgram);
         // this.light = new Light(this.shaderProgram);
 
@@ -27,12 +25,12 @@ class Renderer {
       this.meshManager.generateMesh(data);
       return this;
     }
-    setViewPort() {
-        this.gl.viewport(0, 0, this.width, this.height);
+    setViewPort(camera) {
+        this.gl.viewport(0, 0, camera.width, camera.height);
         return this;
     }
-    setPerspective() {
-        mat4.perspective(Transform.pMatrix, glMatrix.toRadian(90), this.width / this.height, 0.1, 100.0);
+    setPerspective(camera) {
+        mat4.perspective(camera.pMatrix, camera.viewAngle, camera.width / camera.height, camera.near, camera.far);
         return this;
     }
     initShaders(fragmentShader, vertexShader) {
@@ -44,17 +42,17 @@ class Renderer {
 
         this.shaderProgram
             .getAttribLocation("vertexPositionAttribute", "aVertexPosition")
-            .getAttribLocation("vertexColorAttribute", "aVertexColor")
+            // .getAttribLocation("vertexColorAttribute", "aVertexColor")
             // .getAttribLocation("vertexNormalAttribute", "aVertexNormal");
 
         this.shaderProgram
-            .getUniformLocation("pMatrixUniform", "uPMatrix")
-            .getUniformLocation("mvMatrixUniform", "uMVMatrix")
+            .getUniformLocation("mvpMatrixUniform", "uMVPMatrix")
             // .getUniformLocation("nMatrixUniform", "uNMatrix")
             // .getUniformLocation("ambientColorUniform", "uAmbientColor")
             // .getUniformLocation("lightingDirectionUniform", "uLightingDirection")
             // .getUniformLocation("directionalColorUniform", "uDirectionalColor");
 
+        console.log(this.shaderProgram);
         return this;
     }
     clear() {
@@ -69,23 +67,22 @@ class Renderer {
 
         return this;
     }
-    setMatrixUniforms() {
-        this.gl.uniformMatrix4fv(ShaderProgram.pMatrixUniform, false, Transform.pMatrix);
-
-        this.gl.uniformMatrix4fv(ShaderProgram.mvMatrixUniform, false, Transform.mvMatrix);
+    setMatrixUniforms(mesh) {
+        let mvpMatrix = mat4.create();
+        mat4.multiply(mesh.transform.mvMatrix, mesh.transform.mvMatrix, this.camera.transform.mvMatrix);
+        mat4.multiply(mvpMatrix, this.camera.pMatrix, mesh.transform.mvMatrix);
+        this.gl.uniformMatrix4fv(this.shaderProgram.mvpMatrixUniform, false, mvpMatrix);
 
         // let normalMatrix = mat3.create();
         // mat3.normalFromMat4(normalMatrix, Transform.mvMatrix);
         // this.gl.uniformMatrix3fv(ShaderProgram.nMatrixUniform, false, normalMatrix);
     }
     renderMesh(mesh) {
-        Transform.mvPushMatrix();
+        // console.log(mesh);
         mesh.bindBuffer(this.shaderProgram.vertexPositionAttribute, mesh.vertexBuffer);
-        mesh.bindBuffer(this.shaderProgram.vertexColorAttribute, mesh.colorBuffer);
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-        this.setMatrixUniforms();
+        this.setMatrixUniforms(mesh);
         this.gl.drawElements(this.gl.TRIANLES, mesh.vertexNum, this.gl.UNSIGNED_SHORT, 0);
-        Transform.mvPopMatrix();
     }
     renderAmbientLight(light) {
         this.shaderProgram.setVec3Uniform(this.shaderProgram.ambientColorUniform, light.ambient);
@@ -106,19 +103,20 @@ class Renderer {
         return this;
     }
     drawScene() {
-        this.clear()
-            .setViewPort()
-            .setPerspective();
+        this.setViewPort(this.camera)
+            .clear()
+            .setPerspective(this.camera);
 
-        Transform.reset();
+        this.camera.reset();
         
-        // this.camera.transform.translate(1.5, 0, -8.0);
+        this.camera.transform.translate(1.5, 0, 7.0);
         // this.camera.translate()
-                // .rotate();
+                   // .rotate();
                 
         // this.meshManager.bindBuffers().draw();
 
-        this.renderMesh(this.square);
+        // this.cube.fromCameraTransform(this.camera).translate(0, 0, 0);
+        this.renderMesh(this.cube);
 
         // this.light.render();        
     }

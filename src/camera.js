@@ -1,8 +1,8 @@
 import Transform from './transform.js'
-import {glMatrix, mat4} from "gl-matrix";
+import {mat4, glMatrix} from 'gl-matrix'
 
 export default class Camera {
-	constructor() {
+	constructor(width, height) {
 		this.transform = new Transform();
 
     	this.currentlyPressedKeys = {};
@@ -14,28 +14,21 @@ export default class Camera {
     	this.lastTime = 0
     	this.joggingAngle = 0;
 
+    	this.width = width;
+    	this.height = height;
+    	this.viewAngle = glMatrix.toRadian(45);
+    	this.near = 0.1;
+    	this.far = 100.0;
+
+    	this.pMatrix = mat4.create();
+
     	document.onkeydown = event => this.handleKeyDown(event);
 		document.onkeyup = event => this.handleKeyUp(event);
 	}
-	setViewPort(width, height) {
-        gl.viewport(0, 0, width, height);
-
-        return this;
-    }
-    setPerspective() {
-  	    mat4.perspective(Transform.pMatrix, glMatrix.toRadian(90), gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
-        return this;
-    }
-    translate() {
-    	this.transform._translate();
-
-    	return this;
-    }
-    rotate() {
-    	this.transform._rotate();
-
-    	return this;
-    }
+	reset() {
+		mat4.identity(this.pMatrix);
+		this.transform.reset();
+	}
 	handleKeyDown(event) {
 		this.currentlyPressedKeys[event.keyCode] = true;
 
@@ -46,7 +39,6 @@ export default class Camera {
 	handleKeyUp(event) {
 		this.currentlyPressedKeys[event.keyCode] = false;
 	}
-
 	handleKeys() {
 	   if (this.currentlyPressedKeys[33]) {
 		  // Page Up
@@ -87,14 +79,14 @@ export default class Camera {
 
 			if (this.speed != 0) {
 				// this.transform.xPos -= Math.sin(Transform.degToRad(this.transform.yaw)) * this.speed * elapsed;
-				this.transform.zPos -= this.speed * elapsed; //Math.cos(Transform.degToRad(this.transform.yaw)) * this.speed * elapsed;
+				this.transform.position.z -= this.speed * elapsed; //Math.cos(Transform.degToRad(this.transform.yaw)) * this.speed * elapsed;
 
 				// this.joggingAngle += elapsed * 0.6;  // 0.6 "fiddle factor" -- makes it feel more realistic :-)
 				// this.transform.yPos = Math.sin(Transform.degToRad(this.joggingAngle)) / 20 + 0.4
 			}
 
-			this.transform.yaw += this.yawRate * elapsed;
-			this.transform.pitch += this.pitchRate * elapsed;
+			this.transform.rotation.x += this.yawRate * elapsed;
+			this.transform.rotation.y += this.pitchRate * elapsed;
 		}
 		this.lastTime = timeNow;
 

@@ -56,17 +56,17 @@
         return this;
     }
     getAttribLocation(attribName, value) {
-        ShaderProgram[attribName] = this.gl.getAttribLocation(this.program, value);
-        this.gl.enableVertexAttribArray(ShaderProgram[attribName]);
+        this[attribName] = this.gl.getAttribLocation(this.program, value);
+        this.gl.enableVertexAttribArray(this[attribName]);
         return this;
     }
     getUniformLocation(uniformName, value) {
-        ShaderProgram[uniformName] = this.gl.getUniformLocation(this.program, value);
+        this[uniformName] = this.gl.getUniformLocation(this.program, value);
         return this;
     }
 
     setVec3Uniform(uniformName, value) {
-        this.gl.uniform3fv(ShaderProgram[uniformName], value);
+        this.gl.uniform3fv(this[uniformName], value);
     }
  }
 
